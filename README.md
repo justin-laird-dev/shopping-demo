@@ -17,7 +17,7 @@ A synthetic grocery shopping demo: browse a seeded product catalog, search and f
 
 ## Prerequisites
 
-- **Node.js 20.19+ (LTS) or 22.x** and npm. A *fresh* `npm install` requires this — Prisma's own installer refuses to run on older Node 20 patch versions (see [Troubleshooting](#troubleshooting) if you hit this).
+- **Node.js (latest LTS recommended)** and npm. This project doesn't hard-require a specific version, but the Prisma CLI (used for migrations, seeding, and client generation) needs **Node 20.19+, 22.12+, or 24.0+** to run at all — on an older Node, install still succeeds but a few steps need a documented manual workaround (see [Troubleshooting](#troubleshooting)). A `.nvmrc` is included if you use `nvm` (`nvm use`).
 
 ## Installation
 
@@ -25,11 +25,19 @@ A synthetic grocery shopping demo: browse a seeded product catalog, search and f
 npm install
 ```
 
+This also runs `prisma generate` automatically (via a `postinstall` script) to produce the Prisma Client. On an unsupported Node version this step fails loudly but harmlessly — `node_modules` is still installed correctly, you just need to re-run `npx prisma generate` once you're on a supported Node version (see [Troubleshooting](#troubleshooting)).
+
 ## Environment Variables
 
-- `DATABASE_URL` — optional. Defaults to `file:./dev.db` (a local SQLite file) if unset. Only set this if you want the database somewhere else.
+- `DATABASE_URL` — **required for the Prisma CLI** (`migrate`, `db seed`, etc. — see [Database Setup](#database-setup)); the running app itself falls back to `file:./dev.db` if unset, but the CLI does not.
 
-`.env` is gitignored — create one locally if you need to override the default.
+Copy the example file and adjust if needed:
+
+```bash
+cp .env.example .env
+```
+
+`.env` itself is gitignored.
 
 ## Running the App
 
@@ -128,6 +136,10 @@ npx tsx prisma/seed.ts
 ```
 
 There's no equivalent bypass for `migrate dev` — applying migrations does need a Node version in the supported range.
+
+**`npm install` reports an error from its `postinstall` script (`prisma generate` failing with `ERR_REQUIRE_ESM`)**
+
+Same root cause as above — `npm install` still completes and `node_modules` is installed correctly (`postinstall` runs after packages are placed), it's only the Prisma Client generation step that didn't run. Fix: switch to a supported Node version (see above) and run `npx prisma generate` once; you don't need to redo the rest of the install.
 
 **`ERR_DLOPEN_FAILED` / a `NODE_MODULE_VERSION` mismatch when running the app, tests, or Prisma commands**
 
