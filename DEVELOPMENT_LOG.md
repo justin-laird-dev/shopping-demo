@@ -52,6 +52,9 @@ A first draft of this log had originally opened with Timeline item 2 (the `bette
 
 Worth noting for the presentation itself: this entry is the log describing its own tooling being built. That's a fairly literal demonstration of the earlier observation that OpenSpec has no natural home for cross-cutting, ambient artifacts — both the hook and the narrative repair above happened entirely outside the propose/apply/archive cycle, as ordinary conversation and file edits, because neither the log's contents nor its own maintenance tooling are really a product "capability" in the OpenSpec sense.
 
+### 9. Second leg: image-order-intake
+A new phase begins here, deliberately run as an experiment in how precisely a change can be specced before any of it is built: a feature branch (`image-order-intake`) was cut from a verified-working `main`, an extended `/opsx:explore` session worked through the architecture (in-process Next.js route, LangGraph.js from the start, Claude vision extraction + catalog matching as two structured-output calls, a "pre-cart" review step before anything touches the real cart), and `/opsx:propose` then produced the full artifact set — proposal, spec, design, and tasks — with implementation deliberately deferred. Sample input images were prepared first, before finalizing `tasks.md`, so the fixed fixture set (not something invented fresh on each attempt) is part of what gets committed and reused across repeated clean-checkout `apply` attempts. The plan from here: commit the spec-only change, then run `/opsx:apply` from a clean checkout, in a fresh session, repeatedly — refining the spec until it reliably produces a working result each time.
+
 ## Problems Encountered (root-cause catalog)
 
 | Problem | Root Cause | Fix |

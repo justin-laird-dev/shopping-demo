@@ -1,0 +1,215 @@
+{
+  "description": "Fixed set of synthetic test images for the image-order-intake feature, each with hand-verified expected extraction and catalog-matching output. Used both for manual verification (tasks.md) and as the basis for an automated eval suite (design.md). Ground truth is expressed by product name, not id, because ids are database-generated at seed time; eval code resolves names to ids against the live catalog.",
+  "images": [
+    {
+      "file": "list-a.jpg",
+      "style": "synthetic: clean typed list",
+      "items": [
+        { "raw_text": "a dozen eggs", "expected_match": { "type": "product", "name": "Organic Free-Range Eggs" } },
+        { "raw_text": "loaf of bread", "expected_match": { "type": "any_of", "names": ["Whole Wheat Bread", "Hearth & Home White Sandwich Bread", "Hearth & Home Multigrain Bread", "Hearth & Home Rye Bread", "Sourdough Loaf", "Pita Bread", "Naan Bread"] } },
+        { "raw_text": "2 sticks of butter", "expected_match": { "type": "any_of", "names": ["Unsalted Butter", "Salted Butter"] } },
+        { "raw_text": "a gallon of milk", "expected_match": { "type": "any_of", "names": ["Whole Milk", "Willowbrook 2% Milk", "Willowbrook Skim Milk"] } },
+        { "raw_text": "buns", "expected_match": { "type": "any_of", "names": ["Brioche Buns", "Hamburger Buns", "Hot Dog Buns"] } },
+        { "raw_text": "brioche buns", "expected_match": { "type": "product", "name": "Brioche Buns" } }
+      ]
+    },
+    {
+      "file": "list-b.jpg",
+      "style": "synthetic: casual handwriting-style font",
+      "items": [
+        { "raw_text": "milk", "expected_match": { "type": "any_of", "names": ["Whole Milk", "Willowbrook 2% Milk", "Willowbrook Skim Milk", "Willowbrook Chocolate Milk"] } },
+        { "raw_text": "butter", "expected_match": { "type": "any_of", "names": ["Unsalted Butter", "Salted Butter"] } },
+        { "raw_text": "bread", "expected_match": { "type": "any_of", "names": ["Whole Wheat Bread", "Hearth & Home White Sandwich Bread", "Hearth & Home Multigrain Bread", "Hearth & Home Rye Bread", "Sourdough Loaf", "Pita Bread", "Naan Bread"] } },
+        { "raw_text": "a dozen eggs", "expected_match": { "type": "product", "name": "Organic Free-Range Eggs" } },
+        { "raw_text": "hot dog buns", "expected_match": { "type": "product", "name": "Hot Dog Buns" } }
+      ]
+    },
+    {
+      "file": "list-c.jpg",
+      "style": "synthetic: phone notes-app / message-bubble style",
+      "items": [
+        { "raw_text": "milk", "expected_match": { "type": "any_of", "names": ["Whole Milk", "Willowbrook 2% Milk", "Willowbrook Skim Milk", "Willowbrook Chocolate Milk"] } },
+        { "raw_text": "whole wheat bread", "expected_match": { "type": "product", "name": "Whole Wheat Bread" } },
+        { "raw_text": "chicken breast", "expected_match": { "type": "product", "name": "Boneless Chicken Breast" } },
+        { "raw_text": "roma tomatoes", "expected_match": { "type": "product", "name": "Roma Tomatoes" } },
+        { "raw_text": "yellow onions", "expected_match": { "type": "product", "name": "Yellow Onions" } },
+        { "raw_text": "brioche buns", "expected_match": { "type": "product", "name": "Brioche Buns" } }
+      ]
+    },
+    {
+      "file": "list-d.jpg",
+      "style": "synthetic: lined notebook paper",
+      "items": [
+        { "raw_text": "2 dozen eggs", "expected_match": { "type": "product", "name": "Organic Free-Range Eggs" } },
+        { "raw_text": "whole wheat bread", "expected_match": { "type": "product", "name": "Whole Wheat Bread" } },
+        { "raw_text": "butter", "expected_match": { "type": "any_of", "names": ["Unsalted Butter", "Salted Butter"] } },
+        { "raw_text": "whole milk", "expected_match": { "type": "product", "name": "Whole Milk" } },
+        { "raw_text": "hamburger buns", "expected_match": { "type": "product", "name": "Hamburger Buns" } },
+        { "raw_text": "yellow onions", "expected_match": { "type": "product", "name": "Yellow Onions" } }
+      ]
+    },
+    {
+      "file": "list-e.jpg",
+      "style": "AI-generated: yellow sticky note on countertop",
+      "items": [
+        { "raw_text": "Avocados", "expected_match": { "type": "product", "name": "Avocados" } },
+        { "raw_text": "Tomatoes", "expected_match": { "type": "any_of", "names": ["Roma Tomatoes", "Canned Diced Tomatoes"] } },
+        { "raw_text": "& limes!", "expected_match": { "type": "product", "name": "Limes" } },
+        { "raw_text": "Salad mix", "expected_match": { "type": "no_match" } },
+        { "raw_text": "Cheese", "expected_match": { "type": "any_of", "names": ["Sharp Cheddar Cheese", "Mild Cheddar Cheese", "Mozzarella Cheese Block", "Shredded Mozzarella", "Shredded Cheddar", "Cream Cheese", "Cottage Cheese", "String Cheese", "Parmesan Cheese Wedge"] } },
+        { "raw_text": "Tortillas", "expected_match": { "type": "no_match" } },
+        { "raw_text": "eggs", "expected_match": { "type": "any_of", "names": ["Organic Free-Range Eggs", "Large Grade A Eggs"] } },
+        { "raw_text": "bananas", "expected_match": { "type": "product", "name": "Bananas" } },
+        { "raw_text": "oat milk", "expected_match": { "type": "product", "name": "Oat Milk" } },
+        { "raw_text": "Salsa", "expected_match": { "type": "product", "name": "Salsa" } },
+        { "raw_text": "Laundry detergent", "expected_match": { "type": "no_match" } },
+        { "raw_text": "Dog treats", "expected_match": { "type": "no_match" } }
+      ]
+    },
+    {
+      "file": "list-f.jpg",
+      "style": "AI-generated: crumpled paper note on wooden table",
+      "items": [
+        { "raw_text": "Chicken", "expected_match": { "type": "any_of", "names": ["Boneless Chicken Breast", "Chicken Thighs", "Chicken Drumsticks"] } },
+        { "raw_text": "rice", "expected_match": { "type": "any_of", "names": ["Long Grain White Rice", "Golden Valley Brown Rice", "Golden Valley Jasmine Rice"] } },
+        { "raw_text": "onions", "expected_match": { "type": "product", "name": "Yellow Onions" } },
+        { "raw_text": "cereal", "expected_match": { "type": "no_match" } },
+        { "raw_text": "yogurt", "expected_match": { "type": "any_of", "names": ["Plain Greek Yogurt", "Vanilla Greek Yogurt", "Strawberry Greek Yogurt"] } },
+        { "raw_text": "toothpaste", "expected_match": { "type": "no_match" } },
+        { "raw_text": "cat food", "expected_match": { "type": "no_match" } },
+        { "raw_text": "sparkling water", "expected_match": { "type": "product", "name": "Sparkling Water 12-Pack" } },
+        { "raw_text": "paper towels (crossed out)", "expected_match": { "type": "excluded", "note": "struck through in the source image; should not appear as a live line item" } },
+        { "raw_text": "bananas", "expected_match": { "type": "product", "name": "Bananas" } },
+        { "raw_text": "eggs", "expected_match": { "type": "any_of", "names": ["Organic Free-Range Eggs", "Large Grade A Eggs"] } },
+        { "raw_text": "olive oil", "expected_match": { "type": "product", "name": "Extra Virgin Olive Oil" } },
+        { "raw_text": "trash bags", "expected_match": { "type": "no_match" } },
+        { "raw_text": "dish soap", "expected_match": { "type": "no_match" } },
+        { "raw_text": "milk?", "expected_match": { "type": "any_of", "names": ["Whole Milk", "Willowbrook 2% Milk", "Willowbrook Skim Milk"] } },
+        { "raw_text": "garlic?", "expected_match": { "type": "product", "name": "Garlic" } },
+        { "raw_text": "bread", "expected_match": { "type": "any_of", "names": ["Whole Wheat Bread", "Hearth & Home White Sandwich Bread", "Hearth & Home Multigrain Bread", "Hearth & Home Rye Bread", "Sourdough Loaf", "Pita Bread", "Naan Bread"] } },
+        { "raw_text": "apples", "expected_match": { "type": "product", "name": "Honeycrisp Apples" } },
+        { "raw_text": "butter", "expected_match": { "type": "any_of", "names": ["Unsalted Butter", "Salted Butter"] } },
+        { "raw_text": "coffee", "expected_match": { "type": "any_of", "names": ["Ground Coffee", "Sunrise Roasters Whole Bean Coffee", "Sunrise Roasters Decaf Ground Coffee", "Instant Coffee"] } },
+        { "raw_text": "snacks for road trip", "expected_match": { "type": "no_match", "note": "too vague to resolve to one product; acceptable to leave unmatched" } },
+        { "raw_text": "vitamins", "expected_match": { "type": "no_match" } },
+        { "raw_text": "laundry detergent", "expected_match": { "type": "no_match" } }
+      ]
+    },
+    {
+      "file": "list-g.jpg",
+      "style": "AI-generated: spiral notebook page on countertop",
+      "items": [
+        { "raw_text": "Milk (checked)", "expected_match": { "type": "any_of", "names": ["Whole Milk", "Willowbrook 2% Milk", "Willowbrook Skim Milk"] } },
+        { "raw_text": "Eggs (checked)", "expected_match": { "type": "any_of", "names": ["Organic Free-Range Eggs", "Large Grade A Eggs"] } },
+        { "raw_text": "Bread", "expected_match": { "type": "any_of", "names": ["Whole Wheat Bread", "Hearth & Home White Sandwich Bread", "Hearth & Home Multigrain Bread", "Hearth & Home Rye Bread", "Sourdough Loaf", "Pita Bread", "Naan Bread"] } },
+        { "raw_text": "Bananas", "expected_match": { "type": "product", "name": "Bananas" } },
+        { "raw_text": "Coffee", "expected_match": { "type": "any_of", "names": ["Ground Coffee", "Sunrise Roasters Whole Bean Coffee", "Sunrise Roasters Decaf Ground Coffee", "Instant Coffee"] } },
+        { "raw_text": "Pasta", "expected_match": { "type": "any_of", "names": ["Penne Pasta", "Spaghetti Pasta", "Elbow Macaroni"] } },
+        { "raw_text": "Dish soap", "expected_match": { "type": "no_match" } },
+        { "raw_text": "Paper towels", "expected_match": { "type": "no_match" } },
+        { "raw_text": "Chix breast", "expected_match": { "type": "product", "name": "Boneless Chicken Breast" } },
+        { "raw_text": "Cheese", "expected_match": { "type": "any_of", "names": ["Sharp Cheddar Cheese", "Mild Cheddar Cheese", "Mozzarella Cheese Block", "Shredded Mozzarella", "Shredded Cheddar", "Cream Cheese", "Cottage Cheese", "String Cheese", "Parmesan Cheese Wedge"] } },
+        { "raw_text": "Tomatoes (crossed out)", "expected_match": { "type": "excluded", "note": "struck through in the source image; should not appear as a live line item" } },
+        { "raw_text": "Onions", "expected_match": { "type": "product", "name": "Yellow Onions" } },
+        { "raw_text": "Lettuce?", "expected_match": { "type": "any_of", "names": ["Iceberg Lettuce", "Romaine Lettuce"] } },
+        { "raw_text": "Trash bags", "expected_match": { "type": "no_match" } },
+        { "raw_text": "Cat food", "expected_match": { "type": "no_match" } },
+        { "raw_text": "Olive oil", "expected_match": { "type": "product", "name": "Extra Virgin Olive Oil" } }
+      ]
+    },
+    {
+      "file": "list-h.jpg",
+      "style": "AI-generated: crumpled paper on granite counter (cropped from a grid)",
+      "items": [
+        { "raw_text": "Milk", "expected_match": { "type": "any_of", "names": ["Whole Milk", "Willowbrook 2% Milk", "Willowbrook Skim Milk"] } },
+        { "raw_text": "eggs", "expected_match": { "type": "any_of", "names": ["Organic Free-Range Eggs", "Large Grade A Eggs"] } },
+        { "raw_text": "bread", "expected_match": { "type": "any_of", "names": ["Whole Wheat Bread", "Hearth & Home White Sandwich Bread", "Hearth & Home Multigrain Bread", "Hearth & Home Rye Bread", "Sourdough Loaf", "Pita Bread", "Naan Bread"] } },
+        { "raw_text": "coffee", "expected_match": { "type": "any_of", "names": ["Ground Coffee", "Sunrise Roasters Whole Bean Coffee", "Sunrise Roasters Decaf Ground Coffee", "Instant Coffee"] } },
+        { "raw_text": "bananas (crossed out)", "expected_match": { "type": "excluded", "note": "struck through in the source image; should not appear as a live line item" } },
+        { "raw_text": "Spinach", "expected_match": { "type": "product", "name": "Organic Baby Spinach" } },
+        { "raw_text": "chicken", "expected_match": { "type": "any_of", "names": ["Boneless Chicken Breast", "Chicken Thighs", "Chicken Drumsticks"] } },
+        { "raw_text": "? rice ?", "expected_match": { "type": "any_of", "names": ["Long Grain White Rice", "Golden Valley Brown Rice", "Golden Valley Jasmine Rice"] } },
+        { "raw_text": "olive oil", "expected_match": { "type": "product", "name": "Extra Virgin Olive Oil" } },
+        { "raw_text": "toilet paper", "expected_match": { "type": "no_match" } },
+        { "raw_text": "dog food", "expected_match": { "type": "no_match" } }
+      ]
+    },
+    {
+      "file": "list-i.jpg",
+      "style": "AI-generated: yellow sticky note (cropped from a grid)",
+      "items": [
+        { "raw_text": "tomatoes", "expected_match": { "type": "any_of", "names": ["Roma Tomatoes", "Canned Diced Tomatoes"] } },
+        { "raw_text": "onion", "expected_match": { "type": "product", "name": "Yellow Onions" } },
+        { "raw_text": "garlic", "expected_match": { "type": "product", "name": "Garlic" } },
+        { "raw_text": "cilantro?", "expected_match": { "type": "no_match" } },
+        { "raw_text": "limes", "expected_match": { "type": "product", "name": "Limes" } },
+        { "raw_text": "avocados", "expected_match": { "type": "product", "name": "Avocados" } },
+        { "raw_text": "tortillas", "expected_match": { "type": "no_match" } },
+        { "raw_text": "salsa (not spicy!)", "expected_match": { "type": "product", "name": "Salsa" } },
+        { "raw_text": "beans", "expected_match": { "type": "any_of", "names": ["Canned Black Beans", "Canned Kidney Beans", "Canned Chickpeas"] } },
+        { "raw_text": "chips (crossed out)", "expected_match": { "type": "excluded", "note": "struck through in the source image; should not appear as a live line item" } }
+      ]
+    },
+    {
+      "file": "list-j.jpg",
+      "style": "AI-generated: spiral notebook page (cropped from a grid)",
+      "items": [
+        { "raw_text": "cat litter", "expected_match": { "type": "no_match" } },
+        { "raw_text": "paper towels", "expected_match": { "type": "no_match" } },
+        { "raw_text": "clean'r (bathroom)", "expected_match": { "type": "no_match" } },
+        { "raw_text": "trash bags", "expected_match": { "type": "no_match" } },
+        { "raw_text": "(illegible, crossed out)", "expected_match": { "type": "excluded", "note": "struck through and illegible in the source image; should not appear as a live line item" } },
+        { "raw_text": "shampoo", "expected_match": { "type": "no_match" } },
+        { "raw_text": "coffee filters", "expected_match": { "type": "no_match" } },
+        { "raw_text": "maybe steak?", "expected_match": { "type": "any_of", "names": ["Beef Ribeye Steak", "Beef Sirloin Steak"] } },
+        { "raw_text": "ice cream", "expected_match": { "type": "any_of", "names": ["Vanilla Ice Cream", "Creamery Row Chocolate Ice Cream", "Creamery Row Strawberry Ice Cream"] } }
+      ]
+    },
+    {
+      "file": "list-k.jpg",
+      "style": "AI-generated: plain paper on stone counter (cropped from a grid)",
+      "items": [
+        { "raw_text": "Apples", "expected_match": { "type": "product", "name": "Honeycrisp Apples" } },
+        { "raw_text": "Cheese", "expected_match": { "type": "any_of", "names": ["Sharp Cheddar Cheese", "Mild Cheddar Cheese", "Mozzarella Cheese Block", "Shredded Mozzarella", "Shredded Cheddar", "Cream Cheese", "Cottage Cheese", "String Cheese", "Parmesan Cheese Wedge"] } },
+        { "raw_text": "Lunch meat", "expected_match": { "type": "any_of", "names": ["Countryside Farms Deli Ham", "Countryside Farms Deli Turkey"] } },
+        { "raw_text": "Mustard", "expected_match": { "type": "product", "name": "Yellow Mustard" } },
+        { "raw_text": "Pickles?", "expected_match": { "type": "no_match" } },
+        { "raw_text": "Soda (diet)", "expected_match": { "type": "no_match", "note": "catalog has no diet variant of any soda" } },
+        { "raw_text": "Light bulbs", "expected_match": { "type": "no_match" } },
+        { "raw_text": "Batteries (AA)", "expected_match": { "type": "no_match" } },
+        { "raw_text": "Printer ink?", "expected_match": { "type": "no_match" } }
+      ]
+    },
+    {
+      "file": "list-l.jpg",
+      "style": "AI-generated: brown paper bag with coffee ring stain (cropped from a grid)",
+      "items": [
+        { "raw_text": "Flour", "expected_match": { "type": "product", "name": "All-Purpose Flour" } },
+        { "raw_text": "Sugar", "expected_match": { "type": "product", "name": "Granulated Sugar" } },
+        { "raw_text": "Eggs", "expected_match": { "type": "any_of", "names": ["Organic Free-Range Eggs", "Large Grade A Eggs"] } },
+        { "raw_text": "Butter", "expected_match": { "type": "any_of", "names": ["Unsalted Butter", "Salted Butter"] } },
+        { "raw_text": "Vanilla", "expected_match": { "type": "no_match", "note": "catalog has vanilla-flavored products (yogurt, ice cream) but no vanilla extract itself" } },
+        { "raw_text": "Chocolate chips (crossed out)", "expected_match": { "type": "excluded", "note": "struck through in the source image; should not appear as a live line item" } },
+        { "raw_text": "Oatmeal", "expected_match": { "type": "product", "name": "Quick Oats" } },
+        { "raw_text": "Cinnamon", "expected_match": { "type": "no_match", "note": "catalog has cinnamon-flavored bakery items but no cinnamon spice itself" } },
+        { "raw_text": "Baking soda?", "expected_match": { "type": "no_match", "note": "catalog has Baking Powder, a related but distinct product; not an acceptable match" } }
+      ]
+    },
+    {
+      "file": "list-m.jpg",
+      "style": "AI-generated: plain paper, handwritten Costco-style list (cropped from a grid)",
+      "items": [
+        { "raw_text": "TP", "expected_match": { "type": "no_match" } },
+        { "raw_text": "paper towels", "expected_match": { "type": "no_match" } },
+        { "raw_text": "chicken breasts", "expected_match": { "type": "product", "name": "Boneless Chicken Breast" } },
+        { "raw_text": "olive oil", "expected_match": { "type": "product", "name": "Extra Virgin Olive Oil" } },
+        { "raw_text": "nuts", "expected_match": { "type": "product", "name": "Mixed Nuts" } },
+        { "raw_text": "protein powder", "expected_match": { "type": "no_match" } },
+        { "raw_text": "dish soap", "expected_match": { "type": "no_match" } },
+        { "raw_text": "Ziploc (lg)", "expected_match": { "type": "no_match" } },
+        { "raw_text": "wine?", "expected_match": { "type": "no_match", "note": "no alcoholic beverages in this catalog" } },
+        { "raw_text": "spaghetti sauce", "expected_match": { "type": "any_of", "names": ["Marinara Sauce", "Nonna's Kitchen Arrabbiata Sauce", "Nonna's Kitchen Alfredo Sauce"] } }
+      ]
+    }
+  ]
+}

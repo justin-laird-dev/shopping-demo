@@ -1,0 +1,57 @@
+## 1. Dependencies and Environment
+
+- [ ] 1.1 Add `@anthropic-ai/sdk`, `@langchain/langgraph`, and `sharp` to `package.json`. Following this project's established pattern of pinning to known-compatible versions rather than assuming latest works (see `DEVELOPMENT_LOG.md`'s dependency-version history), resolve any peer-dependency or Node-version conflicts that arise. Verify: `npm install` completes cleanly and `npx tsc --noEmit` still passes.
+- [ ] 1.2 Add `ANTHROPIC_API_KEY` (required for this feature only, not the rest of the app) and the optional `LANGCHAIN_TRACING_V2` / `LANGCHAIN_API_KEY` / `LANGCHAIN_PROJECT` variables to `.env.example`, with comments explaining they're only needed for the image-order-intake feature. Verify: `git check-ignore -v .env.example` still exits `1` (not ignored).
+- [ ] 1.3 Add a `test:eval` script to `package.json` (e.g. `tsx scripts/eval-image-order-intake.ts`), kept separate from `test`/`test:coverage` so it never runs as part of the coverage-gated suite. Verify: the script name resolves (even before its implementation exists in Group 10, a placeholder that exits non-zero with a "not yet implemented" message is fine at this point).
+
+## 2. Image Normalization
+
+- [ ] 2.1 Spike: using `sharp`, write and run a small standalone script that loads a sample HEIC image and converts it to a grayscale JPEG with a maximum long edge of 1568px. Verify: it produces a valid JPEG on this development environment. If it fails, document the failure and treat "reject HEIC with a clear error message" as the fallback behavior for task 2.2, instead of assuming HEIC support.
+- [ ] 2.2 Implement a `normalizeImage(input: Buffer): Promise<Buffer>` function (e.g. in `lib/image-normalize.ts`) that format-converts to JPEG, downscales to a maximum 1568px long edge, and converts to grayscale — or, if 2.1 found HEIC unsupported, rejects HEIC input with a clear, specific error instead. Verify: a unit test using a small fixed test image fixture asserts the output format and that its dimensions do not exceed the maximum.
+- [ ] 2.3 Add unit tests for: a non-image buffer input (verify it rejects with a recognizable error, not a crash) and an already-small image (verify it is not upscaled). Verify: both tests pass.
+
+## 3. Vision Extraction (Phase 1)
+
+- [ ] 3.1 Define the phase-1 structured-output types per `design.md`: `ExtractedItem { raw_text, descriptor, quantity_text }` and `ExtractionResult { items: ExtractedItem[] }`, in a shared types module for this feature. Verify: `npx tsc --noEmit` passes.
+- [ ] 3.2 Implement the `extractLineItems` call: send the normalized image to Claude with a prompt asking it to report what the shopper currently intends to buy, interpreting the image the way a person would (per `design.md`'s "Interpretation over enumeration" decision) — the prompt must NOT enumerate a checklist of specific conventions (strikethroughs, question marks, etc.) to pattern-match against; general interpretive instructions only. Include one automatic retry on structured-output validation failure. Verify: a unit test mocking the Anthropic client asserts (a) a valid first response passes through unchanged, and (b) an invalid first response triggers exactly one retry.
+
+## 4. Catalog Matching (Phase 2)
+
+- [ ] 4.1 Define the phase-2 structured-output types per `design.md`: `MatchedItem { matched_product_id, resolved_quantity }` (no confidence field — the review UI is where accuracy gets judged, per `design.md`'s schema decision) and `MatchResult { items: MatchedItem[] }`. Verify: `npx tsc --noEmit` passes.
+- [ ] 4.2 Implement the `matchToCatalog` call: given phase-1's extracted items and a caller-supplied catalog array (`{ id, name, category, unit }[]` — this module MUST NOT import Prisma or `lib/db` directly, per `design.md`'s module-boundary decision), match each item against the catalog into the phase-2 schema, with one automatic retry on validation failure, and treat a length-mismatched model response defensively (missing indices become `matched_product_id: null` rather than throwing). Verify: unit tests using a fixed fake catalog and mocked model responses cover a confident match, an explicit no-match, and a deliberately length-mismatched response exercising the defensive fallback.
+
+## 5. Graph Wiring
+
+- [ ] 5.1 Wire `normalizeImage` → `extractLineItems` as a two-node LangGraph.js graph, exposed as `runExtraction(image: Buffer): Promise<ExtractionResult>`, with no Prisma import anywhere in it. Verify: a unit test mocking `extractLineItems` asserts the graph runs both steps in order and returns the composed result.
+- [ ] 5.2 Wire `matchToCatalog` as a single-node LangGraph.js graph, exposed as `runMatching(items: ExtractedItem[], catalog: CatalogEntry[]): Promise<MatchResult>`, with no Prisma import anywhere in it. Verify: a unit test mocking `matchToCatalog` asserts the graph returns its composed result.
+- [ ] 5.3 Verify both graphs run with no tracing-related errors when `LANGCHAIN_TRACING_V2`/`LANGCHAIN_API_KEY` are unset (tracing must be strictly opt-in). Verify: running each graph once in a test with those env vars unset produces no errors.
+
+## 6. API Routes
+
+- [ ] 6.1 Implement `POST /api/image-order-intake/extract` (`app/api/image-order-intake/extract/route.ts`): parse the `multipart/form-data` `image` field, reject a non-image upload with `400` (`{ error, message }` per `design.md`'s error taxonomy), call `runExtraction`, assign `line_id` by array index, and return the extract response shape from `design.md`. Verify: a unit test with `runExtraction` mocked covers the happy path end to end.
+- [ ] 6.2 Verify `status: "no_items_found"` is returned when extraction yields an empty `items` array, and that the `400`/`502` error paths from `design.md` are covered. Verify: unit tests cover a non-image upload (`400`), a mocked extraction failure after retry (`502`), and the empty-items case.
+- [ ] 6.3 Implement `POST /api/image-order-intake/match` (`app/api/image-order-intake/match/route.ts`): accept the JSON body of extracted items, fetch the current catalog via `lib/products.ts`, call `runMatching`, look up `matched_product_name` from the catalog for each match, and return the match response shape from `design.md`, preserving each row's `line_id`. Verify: a unit test with `runMatching` mocked covers the happy path, and a mocked failure-after-retry returns `502`.
+
+## 7. Pre-Cart Review UI
+
+- [ ] 7.1 Build a pre-cart table component (e.g. `components/ImageOrderPreCart.tsx`) rendering one row per returned line item: the extracted `raw_text`/quantity, an editable quantity, and the matched product name (or an explicit "no match" state) — per `design.md`'s "Pre-cart table, single accept action" decision. No confidence indicator of any kind is shown; the shopper judges the match by comparing the two columns themselves. Verify: a component test (React Testing Library, matching this project's existing component-test pattern) asserts each row renders both columns correctly, including the no-match state.
+- [ ] 7.2 Add per-row controls: edit quantity, change or clear the matched product, and exclude the row. These controls only adjust or remove a row locally — they do not individually commit it to the cart. Verify: component tests cover each control updating local review state as expected.
+- [ ] 7.3 Add a single "Accept All" action that calls `useCart().addItem(product, quantity)` once per non-excluded, matched row, and verify the cart is untouched before that action is taken (per the spec's "No Unconfirmed Cart Changes" requirement). Verify: a component test spies on `addItem` and asserts it is called the expected number of times with the expected arguments, and not called at all before "Accept All" is selected.
+
+## 8. Upload Entry Point (Modal)
+
+- [ ] 8.1 Add a button to the existing header/nav that opens a dialog/modal in place (per `design.md`'s "Modal entry point, not a page route" decision — no new page route). The dialog contains a file input and a submit action. Verify: a component test asserts activating the button opens the dialog without a route change.
+- [ ] 8.2 Wire the submit action to call the two endpoints in sequence: `POST /api/image-order-intake/extract`, then (using its response) `POST /api/image-order-intake/match`. While the first call is in flight, show a "reading your list…" state; once it returns, show the extracted raw items immediately (per the spec's "Feedback while processing" requirement) while the second call runs, labeled distinctly (e.g. "matching to products…"); once the second call returns, replace that view with the pre-cart table (Group 7) populated from its response. Verify: component tests cover both loading states in sequence, the intermediate display of raw items, and the final pre-cart render, all using a mocked `fetch`.
+- [ ] 8.3 Handle error responses from either endpoint by showing that response's `message` and letting the shopper retry or close the dialog, without partially applying anything to the cart. Verify: a component test covers an error from each endpoint.
+
+## 9. Documentation
+
+- [ ] 9.1 Update `README.md` with the new required `ANTHROPIC_API_KEY`, the optional LangSmith variables, and a short section describing the image-order-intake feature and how to try it locally. Verify: re-read the README against what was actually built, the same way the earlier fresh-clone verification was done.
+- [ ] 9.2 If task 2.1's spike found a platform-specific `sharp`/HEIC caveat, add a troubleshooting entry documenting it, matching the style of the existing native-binding troubleshooting entries. Skip this task if 2.1 found no caveat worth documenting.
+
+## 10. Verification
+
+- [ ] 10.1 Manually exercise the full feature end to end (upload → extraction → matching → pre-cart review → Accept All → cart) with at least 3 representative images from `test-fixtures/image-order-intake/` (e.g. one clean/typed, one AI-generated photorealistic, one with a struck-through item) and confirm reasonable behavior, cross-checking against `manifest.json`'s expected output for each. This is the actual "does it work" gate for this change, per `design.md`'s testing-strategy decision — do not consider this change complete without having done this.
+- [ ] 10.2 Implement the eval script (`scripts/eval-image-order-intake.ts`, wired to `npm run test:eval` from task 1.3): for each entry in `test-fixtures/image-order-intake/manifest.json`, call `runExtraction` then `runMatching` against the real seeded catalog (the same sequence the two endpoints use), resolve each entry's expected product name(s) to ids from that catalog, and grade the actual output per line per the rules in `design.md` (`product` / `any_of` / `no_match` / `excluded`). Print a per-image and overall summary (N/M lines correct); this script exits informationally, it is not a pass/fail gate. Verify: running it against the full 13-image manifest completes and prints a summary without crashing.
+- [ ] 10.3 Run the eval suite (`npm run test:eval`) and read the results. A low score on a genuinely ambiguous line (already covered by `any_of` in the manifest) is not a bug; a wrong result on an unambiguous line (a `product` or `no_match` entry) is worth a quick look at the relevant prompt before considering the change done.
+- [ ] 10.4 Run `npm test`, `npm run test:coverage`, `npm run lint`, and `npm run build`. Verify: all pass, and the coverage thresholds still hold with the new deterministic tests included.
